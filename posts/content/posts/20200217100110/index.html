@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en-gb">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Personal Blog  | Quicksort in Coq</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.68.3" />
+    
+    
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    
+
+    
+    
+      <link href="/dist/css/app.1cb140d8ba31d5b2f1114537dd04802a.css" rel="stylesheet">
+    
+
+    
+
+    
+      
+    
+
+    
+    
+    <meta property="og:title" content="Quicksort in Coq" />
+<meta property="og:description" content="Motivation The definition of Quicksort   Hopefully this isn&#39;t too new, but to be explicit.  To start with, here&#39;s the classic definition in Haskell. quicksort :: [Int] -&gt; [Int] quicksort l = case l of (x:rest) -&gt; let (less_than_x, greater_than_x) = partition (&lt; x) rest in quicksort less_than_x &#43;&#43; [x] &#43;&#43; quicksort greater_than_x [] -&gt; []   If you&#39;ve not seen this before, in prose it&#39;s saying: quicksort :: [Int] -&gt; [Int]   quicksort is a function that takes a list of integers, and returns a list of integers." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://www.alexwellbelove.com/posts/content/posts/20200217100110/" />
+<meta property="article:published_time" content="2020-04-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-04-12T00:00:00+00:00" />
+<meta itemprop="name" content="Quicksort in Coq">
+<meta itemprop="description" content="Motivation The definition of Quicksort   Hopefully this isn&#39;t too new, but to be explicit.  To start with, here&#39;s the classic definition in Haskell. quicksort :: [Int] -&gt; [Int] quicksort l = case l of (x:rest) -&gt; let (less_than_x, greater_than_x) = partition (&lt; x) rest in quicksort less_than_x &#43;&#43; [x] &#43;&#43; quicksort greater_than_x [] -&gt; []   If you&#39;ve not seen this before, in prose it&#39;s saying: quicksort :: [Int] -&gt; [Int]   quicksort is a function that takes a list of integers, and returns a list of integers.">
+<meta itemprop="datePublished" content="2020-04-12T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-04-12T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="717">
+
+
+
+<meta itemprop="keywords" content="functional,,programming," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Quicksort in Coq"/>
+<meta name="twitter:description" content="Motivation The definition of Quicksort   Hopefully this isn&#39;t too new, but to be explicit.  To start with, here&#39;s the classic definition in Haskell. quicksort :: [Int] -&gt; [Int] quicksort l = case l of (x:rest) -&gt; let (less_than_x, greater_than_x) = partition (&lt; x) rest in quicksort less_than_x &#43;&#43; [x] &#43;&#43; quicksort greater_than_x [] -&gt; []   If you&#39;ve not seen this before, in prose it&#39;s saying: quicksort :: [Int] -&gt; [Int]   quicksort is a function that takes a list of integers, and returns a list of integers."/>
+
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="http://www.alexwellbelove.com" class="f3 fw2 hover-white no-underline white-90 dib">
+      Personal Blog
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        POSTS
+      </aside>
+      
+
+
+
+
+  <div id="sharing" class="mt3">
+
+    
+    <a href="https://www.facebook.com/sharer.php?u=http://www.alexwellbelove.com/posts/content/posts/20200217100110/" class="facebook no-underline" aria-label="share on Facebook">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+
+    </a>
+
+    
+    
+    <a href="https://twitter.com/share?url=http://www.alexwellbelove.com/posts/content/posts/20200217100110/&amp;text=Quicksort%20in%20Coq" class="twitter no-underline" aria-label="share on Twitter">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+    </a>
+
+    
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=http://www.alexwellbelove.com/posts/content/posts/20200217100110/&amp;title=Quicksort%20in%20Coq" class="linkedin no-underline" aria-label="share on LinkedIn">
+      <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+
+    </a>
+  </div>
+
+      <h1 class="f1 athelas mt3 mb1">Quicksort in Coq</h1>
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2020-04-12T00:00:00Z">April 12, 2020</time>
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray pr4-l w-two-thirds-l">
+<p>
+Motivation
+</p>
+<h2 id="headline-1">
+The definition of Quicksort
+</h2>
+<p>
+Hopefully this isn&#39;t too new, but to be explicit.
+</p>
+<p>
+To start with, here&#39;s the classic definition in Haskell.
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-haskell" data-lang="haskell"><span style="color:#a6e22e">quicksort</span> <span style="color:#f92672">::</span> [<span style="color:#66d9ef">Int</span>] <span style="color:#f92672">-&gt;</span> [<span style="color:#66d9ef">Int</span>]
+<span style="color:#a6e22e">quicksort</span> l <span style="color:#f92672">=</span> <span style="color:#66d9ef">case</span> l <span style="color:#66d9ef">of</span> 
+  (x<span style="color:#66d9ef">:</span>rest) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">let</span> (less_than_x, greater_than_x) <span style="color:#f92672">=</span> partition (<span style="color:#f92672">&lt;</span> x) rest
+              <span style="color:#66d9ef">in</span> quicksort less_than_x <span style="color:#f92672">++</span> [x] <span style="color:#f92672">++</span> quicksort greater_than_x
+  <span style="color:#66d9ef">[]</span> <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">[]</span></code></pre></div>
+</div>
+<p>
+If you&#39;ve not seen this before, in prose it&#39;s saying:
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-haskell" data-lang="haskell"><span style="color:#a6e22e">quicksort</span> <span style="color:#f92672">::</span> [<span style="color:#66d9ef">Int</span>] <span style="color:#f92672">-&gt;</span> [<span style="color:#66d9ef">Int</span>]</code></pre></div>
+</div>
+<p>
+quicksort is a function that takes a list of integers, and returns a list of integers.
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-haskell" data-lang="haskell"><span style="color:#66d9ef">[]</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">[]</span></code></pre></div>
+</div>
+<p>
+The sorted empty list is just the empty list.
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-haskell" data-lang="haskell">(x<span style="color:#66d9ef">:</span>rest) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">let</span> (less_than_x, greater_than_x) <span style="color:#f92672">=</span> partition (<span style="color:#f92672">&lt;</span> x) rest
+            <span style="color:#66d9ef">in</span> quicksort less_than_x <span style="color:#f92672">++</span> [x] <span style="color:#f92672">++</span> quicksort greater_than_x</code></pre></div>
+</div>
+<p>
+For a non-empty list, take the head of the list (x) as a pivot, and 
+partition the &#39;rest&#39; of the list based on whether or not it is greater than x.
+</p>
+<p>
+Call &#39;quicksort&#39; on these sublists recursively, and combine with x in the middle.
+</p>
+<p>
+Here&#39;s the classic definition of quicksort, transliterated to coq.
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq"><span style="color:#f92672">Definition</span> quickSort <span style="color:#f92672">(</span>l <span style="color:#f92672">:</span> <span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">)</span>  <span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">)</span> <span style="color:#f92672">:=</span>
+ <span style="color:#66d9ef">match</span> l <span style="color:#66d9ef">with</span>
+  <span style="color:#f92672">|</span> x <span style="color:#f92672">::</span> rest <span style="color:#f92672">=&gt;</span> 
+        <span style="color:#66d9ef">let</span> <span style="color:#f92672">(</span>less_than_x<span style="color:#f92672">,</span> greater_than_x<span style="color:#f92672">)</span> <span style="color:#f92672">:=</span> partition <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> y <span style="color:#f92672">=&gt;</span> y <span style="color:#f92672">&lt;=</span> x<span style="color:#f92672">)</span> rest
+        <span style="color:#66d9ef">in</span> quickSort less_than_x <span style="color:#f92672">++</span> <span style="color:#f92672">[</span>x<span style="color:#f92672">]</span> <span style="color:#f92672">++</span> quickSort greater_than_x
+  <span style="color:#f92672">|</span> [] <span style="color:#f92672">=&gt;</span> []
+  <span style="color:#66d9ef">end</span><span style="color:#f92672">.</span></code></pre></div>
+</div>
+<p>
+This is identical except for some syntactic differences, the major ones being:
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq"><span style="color:#f92672">Definition</span> quickSort <span style="color:#f92672">(</span>l <span style="color:#f92672">:</span> <span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">)</span>  <span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">)</span> <span style="color:#f92672">:=</span></code></pre></div>
+</div>
+<p>
+This means that we define &#39;quickSort&#39; as a function taking a list of nats (natural numbers) &#39;l&#39;, and
+   returning another list of nats.
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq"><span style="color:#66d9ef">match</span> l <span style="color:#66d9ef">with</span> <span style="color:#f92672">...</span></code></pre></div>
+</div>
+<p>
+This is identical to Haskell&#39;s &#39;case&#39;.
+</p>
+<p>
+Unfortunately, if we attempt to compile this, we get an error message:
+</p>
+<div class="src src-shell">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Error: The reference quickSort was not found in the current environment.</code></pre></div>
+</div>
+<p>
+Coq doesn&#39;t allow recursive functions using the default &#39;Definition&#39; syntax.
+</p>
+<p>
+This is because Coq is primarily used in the construction of proofs, and recursive functions can easily go awry.
+</p>
+<h2 id="headline-2">
+Bottoms and Fixpoints
+</h2>
+<p>
+An infinitely looping function, e.g.
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-haskell" data-lang="haskell"><span style="color:#a6e22e">f</span> x <span style="color:#f92672">=</span> f x</code></pre></div>
+</div>
+<p>
+is equivalent to ⊥ in Haskell. From ⊥ it is possible to prove anything, 
+  using the &#39;absurd&#39; function. This is equivalent to the logical ex falso.
+</p>
+<p>
+  Coq doesn&#39;t allow you to introduce logical fallacies, and so it requires a proof that your recursive function terminates.
+  For simple cases it can do this for you, simply by replacing `Definition` with `Fixpoint`.
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq"><span style="color:#f92672">Fixpoint</span> length <span style="color:#f92672">(</span>l <span style="color:#f92672">:</span> <span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">)</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">nat</span> <span style="color:#f92672">:=</span>
+ <span style="color:#66d9ef">match</span> l <span style="color:#66d9ef">with</span>
+  <span style="color:#f92672">|</span> x <span style="color:#f92672">::</span> rest <span style="color:#f92672">=&gt;</span> 1 <span style="color:#f92672">+</span> length rest
+  <span style="color:#f92672">|</span> [] <span style="color:#f92672">=&gt;</span> 0
+  <span style="color:#66d9ef">end</span><span style="color:#f92672">.</span></code></pre></div>
+</div>
+<p>
+The compiler is smart enough to notice that 
+<code class="verbatim">length is recursively defined (decreasing on 1st argument).</code>
+</p>
+<p>
+I.e., that the list is getting structurally smaller with each call 
+</p>
+<p>
+However, our quicksort is slightly more complex, and trying to use the same approach gives us:
+</p>
+<div class="src src-shell">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Recursive call to quickSort has principal argument equal to <span style="color:#e6db74">&#34;less_than_x&#34;</span> instead of <span style="color:#e6db74">&#34;rest&#34;</span>.</code></pre></div>
+</div>
+<p>
+It isn&#39;t immediately obvious to the compiler that <code>less_than_x</code> has to be smaller than <code>rest</code>.
+We know it is, because <code>partition</code> cannot produce a list larger than its input, but we need to convince the compiler of that.
+</p>
+<h2 id="headline-3">
+Program Fixpoint
+</h2>
+<p>
+There is another, stronger, bit of syntax Coq gives us to help in defining recursive functions, <code>Program Fixpoint</code>.
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">Program <span style="color:#f92672">Fixpoint</span> quickSort <span style="color:#f92672">(</span>l <span style="color:#f92672">:</span> <span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>measure <span style="color:#f92672">(</span>length l<span style="color:#f92672">)}</span> <span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">)</span> <span style="color:#f92672">:=</span>
+<span style="color:#f92672">...</span></code></pre></div>
+</div>
+<p>
+  In addition to changing <code>Fixpoint</code> to <code>Program Fixpoint</code>,
+  we add to our type definition a measure, <code>{measure (length l)}</code> <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>,
+  that we expect to decrease to an initial point. 
+  This finally lets us define quickSort!
+</p>
+<p>
+  Firstly, we have to prove that 
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">length <span style="color:#f92672">(</span>fst <span style="color:#f92672">(</span>partition <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> y <span style="color:#f92672">:</span> <span style="color:#66d9ef">nat</span> <span style="color:#f92672">=&gt;</span> y <span style="color:#f92672">&lt;=?</span> x<span style="color:#f92672">)</span> rest<span style="color:#f92672">))</span> <span style="color:#f92672">&lt;</span> length <span style="color:#f92672">(</span>x <span style="color:#f92672">::</span> rest<span style="color:#f92672">)</span></code></pre></div>
+</div>
+<h2 id="headline-4">
+Well foundedness
+</h2>
+<p>
+and then that
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">well_founded <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x y <span style="color:#f92672">:</span> <span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span> <span style="color:#f92672">=&gt;</span> length x <span style="color:#f92672">&lt;</span> length y<span style="color:#f92672">)</span></code></pre></div>
+</div>
+<p>
+However, how do we know this terminates?
+</p>
+<p>
+(Well-founded recursion)
+Based on well founded relation. E.g. 1,2,3 usual order has a least element, -1,-2-,3 doesn&#39;t.
+</p>
+<p>
+Is it possible to say, 
+&#39;if rest is structurally smaller than l, there is a class of functions F s.t. for any f in F, 
+f rest is structurally smaller than l? E.g. map.
+&#39;. YES! ltof (:
+</p>
+<p>
+..
+</p>
+<p>
+Return ints for number of executions
+</p>
+<h2 id="headline-5">
+Footnotes
+</h2>
+<h2 id="headline-6">
+Verifying Quicksort Complexity and Behaviour
+</h2>
+<div class="footnotes">
+<hr class="footnotes-separatator">
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<p>
+{} syntax means &#39;implicit argument&#39;, i.e. one the compiler gets from scope rather than
+  as explicitly defined.
+   Proofs.
+</p>
+</div>
+</div>
+</div>
+</div>
+<ul class="pa0">
+  
+   <li class="list">
+     <a href="/tags/functional" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">functional,</a>
+   </li>
+  
+   <li class="list">
+     <a href="/tags/programming" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">programming</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://www.alexwellbelove.com" >
+    &copy;  Personal Blog 2020 
+  </a>
+    <div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+  </div>
+</footer>
+
+    
+
+  <script src="/dist/js/app.3fc0f988d21662902933.js"></script>
+
+
+  </body>
+</html>
