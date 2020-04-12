@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>functional, on Personal Blog</title>
+    <title>functional on Personal Blog</title>
     <link>http://www.alexwellbelove.com/tags/functional/</link>
-    <description>Recent content in functional, on Personal Blog</description>
+    <description>Recent content in functional on Personal Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
     <lastBuildDate>Sun, 12 Apr 2020 00:00:00 +0000</lastBuildDate>
@@ -13,10 +13,10 @@
     
     <item>
       <title>Quicksort in Coq</title>
-      <link>http://www.alexwellbelove.com/posts/content/posts/20200217100110/</link>
+      <link>http://www.alexwellbelove.com/posts/20200217100110/</link>
       <pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://www.alexwellbelove.com/posts/content/posts/20200217100110/</guid>
+      <guid>http://www.alexwellbelove.com/posts/20200217100110/</guid>
       <description>Motivation The definition of Quicksort   Hopefully this isn&amp;#39;t too new, but to be explicit.  To start with, here&amp;#39;s the classic definition in Haskell. quicksort :: [Int] -&amp;gt; [Int] quicksort l = case l of (x:rest) -&amp;gt; let (less_than_x, greater_than_x) = partition (&amp;lt; x) rest in quicksort less_than_x ++ [x] ++ quicksort greater_than_x [] -&amp;gt; []   If you&amp;#39;ve not seen this before, in prose it&amp;#39;s saying: quicksort :: [Int] -&amp;gt; [Int]   quicksort is a function that takes a list of integers, and returns a list of integers.</description>
     </item>
     
