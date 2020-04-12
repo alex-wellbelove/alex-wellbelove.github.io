@@ -9,7 +9,7 @@
     <meta name="generator" content="Hugo 0.68.3" />
     
     
-      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+      <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
     
 
     
@@ -40,9 +40,22 @@
 <meta name="twitter:title" content="Posts"/>
 <meta name="twitter:description" content=""/>
 
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-163346024-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+    
   </head>
 
-  <body class="ma0 avenir bg-near-white">
+  <body class="ma0 avenir bg-near-white production">
 
     
 
@@ -101,7 +114,7 @@
       </a>
     </h1>
     <div class="nested-links f5 lh-copy nested-copy-line-height">
-      Motivation The definition of Quicksort   Hopefully this isn&#39;t too new, but to be explicit.  To start with, here&#39;s the classic definition in Haskell. quicksort :: [Int] -&gt; [Int] quicksort l = case l of (x:rest) -&gt; let (less_than_x, greater_than_x) = partition (&lt; x) rest in quicksort less_than_x ++ [x] ++ quicksort greater_than_x [] -&gt; []   If you&#39;ve not seen this before, in prose it&#39;s saying: quicksort :: [Int] -&gt; [Int]   quicksort is a function that takes a list of integers, and returns a list of integers.
+      The definition of Quicksort   To start with, here&#39;s the classic definition of quicksort in Haskell. quicksort :: [Int] -&gt; [Int] quicksort l = case l of (x:rest) -&gt; let (less_than_x, greater_than_x) = partition (&lt; x) rest in quicksort less_than_x ++ [x] ++ quicksort greater_than_x [] -&gt; []   If you&#39;ve not seen this before, in prose it&#39;s saying: quicksort :: [Int] -&gt; [Int]   quicksort is a function that takes a list of integers, and returns a list of integers.
     </div>
   </div>
 </div>
