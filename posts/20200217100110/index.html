@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     
-    <title>Personal Blog  | Quicksort in Coq</title>
+    <title>Alex Wellbelove  | Quicksort in Coq</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1">
     <meta name="generator" content="Hugo 0.68.3" />
     
@@ -35,7 +35,7 @@
 <meta itemprop="description" content="The definition of Quicksort   To start with, here&#39;s the classic definition of quicksort in Haskell. quicksort :: [Int] -&gt; [Int] quicksort l = case l of (x:rest) -&gt; let (less_than_x, greater_than_x) = partition (&lt; x) rest in quicksort less_than_x &#43;&#43; [x] &#43;&#43; quicksort greater_than_x [] -&gt; []   If you&#39;ve not seen this before, in prose it&#39;s saying: quicksort :: [Int] -&gt; [Int]   quicksort is a function that takes a list of integers, and returns a list of integers.">
 <meta itemprop="datePublished" content="2020-04-12T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-04-12T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="766">
+<meta itemprop="wordCount" content="1576">
 
 
 
@@ -69,7 +69,7 @@ if (!doNotTrack) {
       <nav class="pv3 ph3 ph4-ns" role="navigation">
   <div class="flex-l justify-between items-center center">
     <a href="http://www.alexwellbelove.com" class="f3 fw2 hover-white no-underline white-90 dib">
-      Personal Blog
+      Alex Wellbelove
     </a>
     <div class="flex-l items-center">
       
@@ -273,7 +273,13 @@ There is another, stronger, bit of syntax Coq gives us to help in defining recur
 In addition to changing <code>Fixpoint</code> to <code>Program Fixpoint</code>,
 we add to our type definition a measure, <code>{measure (length l)}</code> <sup class="footnote-reference"><a id="footnote-reference-3" href="#footnote-3">3</a></sup>,
 that we expect to decrease to an initial point. 
-This finally lets us define quicksort!
+This finally lets us define <code>quicksort</code>!
+</p>
+<p>
+Unfortunately, we can&#39;t actually <em>use</em> it yet. 
+</p>
+<p>
+Before we do so, we need to fully convince Coq that our list length will decrease to a stopping point.
 </p>
 <p>
 Firstly, we have to prove that the measure we just defined is actually decreasing  <sup class="footnote-reference"><a id="footnote-reference-4" href="#footnote-4">4</a></sup>
@@ -282,7 +288,7 @@ Firstly, we have to prove that the measure we just defined is actually decreasin
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">length less_than_x <span style="color:#f92672">&lt;</span> length <span style="color:#f92672">(</span>x <span style="color:#f92672">::</span> rest<span style="color:#f92672">)</span></code></pre></div>
 </div>
 <p>
-and then that our measure is &#39;well defined&#39; <sup class="footnote-reference"><a id="footnote-reference-5" href="#footnote-5">5</a></sup>
+and then that our measure is <a href="https://en.wikipedia.org/wiki/Well-founded_relation">&#39;well founded&#39;</a> <sup class="footnote-reference"><a id="footnote-reference-5" href="#footnote-5">5</a></sup>
 </p>
 <div class="src src-coq">
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">well_founded <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x y <span style="color:#f92672">=&gt;</span> length x <span style="color:#f92672">&lt;</span> length y<span style="color:#f92672">)</span></code></pre></div>
@@ -291,16 +297,157 @@ and then that our measure is &#39;well defined&#39; <sup class="footnote-referen
 Which means broadly that there are no &#39;infinite descending chains&#39; of lists 
 </p>
 <p>
-<code>l_1 l_2 l_3 ..</code> 
+<code>l1 l2 l3 ..</code> 
 </p>
 <p>
 such that 
 </p>
 <p>
-<code>length l_1 &gt; length l_2 &gt; length l_3 ..</code>.
+<code>length l1 &gt; length l2 &gt; length l3 ..</code>.
 </p>
 <p>
 The absence of such lists implies that the function will terminate.
+</p>
+<p>
+In Coq, these necessary proofs are called <code>Obligations</code>, and to discharge them we write a proof script.
+</p>
+<p>
+To learn about proof scripts in general, <a href="https://softwarefoundations.cis.upenn.edu">Software Foundations</a> is a joy.
+</p>
+<h2 id="headline-4">
+Proving our obligations
+</h2>
+<p>
+To prove the first obligation turns out to be the most finicky.  
+First, we need to slightly muddy our definition so that we can refer to our <code>less_than_x</code> and <code>greater_than_x</code> 
+in our proof script. 
+</p>
+<p>
+Unfortunately these variable names don&#39;t remain in scope for the proof, 
+so we have to use the full original calculation as the name.
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq"><span style="color:#f92672">Definition</span> quicksort <span style="color:#f92672">(</span>l <span style="color:#f92672">:</span> <span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">)</span>  <span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">)</span> <span style="color:#f92672">:=</span>
+ <span style="color:#66d9ef">match</span> l <span style="color:#66d9ef">with</span>
+  <span style="color:#f92672">|</span> x <span style="color:#f92672">::</span> rest <span style="color:#f92672">=&gt;</span> 
+        quicksort <span style="color:#f92672">(</span>fst <span style="color:#f92672">(</span>partition <span style="color:#f92672">(</span>leb x<span style="color:#f92672">)</span> rest<span style="color:#f92672">))</span> <span style="color:#f92672">++</span> <span style="color:#f92672">[</span>x<span style="color:#f92672">]</span> <span style="color:#f92672">++</span> quicksort <span style="color:#f92672">(</span>snd <span style="color:#f92672">(</span>partition <span style="color:#f92672">(</span>leb x<span style="color:#f92672">)</span> rest<span style="color:#f92672">))</span>
+  <span style="color:#f92672">|</span> [] <span style="color:#f92672">=&gt;</span> []
+  <span style="color:#66d9ef">end</span><span style="color:#f92672">.</span></code></pre></div>
+</div>
+<p>
+Our first obligation becomes
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">length <span style="color:#f92672">(</span>fst <span style="color:#f92672">(</span>partition <span style="color:#f92672">(</span>leb x<span style="color:#f92672">)</span> rest<span style="color:#f92672">))</span> <span style="color:#f92672">&lt;</span> length <span style="color:#f92672">(</span>x <span style="color:#f92672">::</span> rest<span style="color:#f92672">)</span></code></pre></div>
+</div>
+<p>
+Or equivalently
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">length <span style="color:#f92672">(</span>fst <span style="color:#f92672">(</span>partition <span style="color:#f92672">(</span>leb x<span style="color:#f92672">)</span> rest<span style="color:#f92672">))</span> <span style="color:#f92672">&lt;</span> 1 <span style="color:#f92672">+</span> length <span style="color:#f92672">(</span>rest<span style="color:#f92672">)</span></code></pre></div>
+</div>
+<p>
+It is worth taking a minute to check how you intuitively know this to be true.
+</p>
+<p>
+We can prove this by using an auxiliary proof <code>partition_preserves_length</code>.
+</p>
+<p>
+For any function f:
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">length <span style="color:#f92672">(</span>fst <span style="color:#f92672">(</span>partition f <span style="color:#66d9ef">list</span><span style="color:#f92672">))</span> <span style="color:#f92672">&lt;=</span> length <span style="color:#66d9ef">list</span></code></pre></div>
+</div>
+<p>
+An annotated proof of which is below <sup class="footnote-reference"><a id="footnote-reference-6" href="#footnote-6">6</a></sup>.
+</p>
+<p>
+Here&#39;s how we use it to prove our obligation.
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">Obligation 1<span style="color:#f92672">.</span>
+  <span style="color:#66d9ef">apply</span> le_lt_n_Sm<span style="color:#f92672">.</span>
+  <span style="color:#66d9ef">apply</span> partition_preserves_length<span style="color:#f92672">.</span>
+<span style="color:#f92672">Defined</span><span style="color:#f92672">.</span> <span style="color:#f92672">[</span>fn<span style="color:#f92672">:</span>defined<span style="color:#f92672">]</span></code></pre></div>
+</div>
+<p>
+The definition of <code>le_lt_n_Sm</code> is in the standard library:
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">a <span style="color:#f92672">&lt;=</span> b <span style="color:#f92672">-&gt;</span> a <span style="color:#f92672">&lt;</span> 1 <span style="color:#f92672">+</span> b</code></pre></div>
+</div>
+<p>
+By <code>apply</code> ing this, we transform our goal into:
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">length <span style="color:#f92672">(</span>fst <span style="color:#f92672">(</span>partition f <span style="color:#66d9ef">list</span><span style="color:#f92672">))</span> <span style="color:#f92672">&lt;=</span> length <span style="color:#66d9ef">list</span></code></pre></div>
+</div>
+<p>
+Which is exactly our <code>partition_preserves_length</code>, applying which proves the lemma.
+We take the same approach for Obligation 2.
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">length <span style="color:#f92672">(</span>snd <span style="color:#f92672">(</span>partition f <span style="color:#66d9ef">list</span><span style="color:#f92672">))</span> <span style="color:#f92672">&lt;=</span> length <span style="color:#66d9ef">list</span></code></pre></div>
+</div>
+<p>
+The final obligation is straightforward.
+</p>
+<p>
+We can search Coq&#39;s standard library of proofs with:
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq"><span style="color:#f92672">Search</span> well_founded<span style="color:#f92672">.</span></code></pre></div>
+</div>
+<p>
+We find in <code>Coq.Arith.Wf_nat</code>.
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">well_founded_ltof<span style="color:#f92672">:</span> <span style="color:#66d9ef">forall</span> <span style="color:#f92672">(</span>A <span style="color:#f92672">:</span> <span style="color:#66d9ef">Type</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span>f <span style="color:#f92672">:</span> A <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">),</span> well_founded <span style="color:#f92672">(</span>ltof A f<span style="color:#f92672">)</span></code></pre></div>
+</div>
+<p>
+with
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">ltof <span style="color:#f92672">(</span>a b <span style="color:#f92672">:</span> A<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>f <span style="color:#f92672">:</span> A <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">)</span> <span style="color:#f92672">:=</span> f a <span style="color:#f92672">&lt;</span> f b</code></pre></div>
+</div>
+<p>
+I.e., a relation of the form &#34;<code>a</code> is smaller than <code>b</code> if <code>f a</code> is less than <code>f b</code>&#34; is well founded.
+</p>
+<p>
+This is all we need to discharge our obligation. Coq will infer automatically that 
+<code>f</code> refers to length here, and that a and b refer to our <code>lists</code>.
+</p>
+<p>
+<code class="verbatim">A list a is smaller than another list b if the length of list a is less than the length of list b.</code>
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">Obligation 3
+  <span style="color:#66d9ef">apply</span> well_founded_ltof<span style="color:#f92672">.</span>
+<span style="color:#f92672">Qed</span><span style="color:#f92672">.</span></code></pre></div>
+</div>
+<p>
+Coq will actually fulfill this obligation for us automatically, if <code>well_founded_ltof</code> is in scope.
+</p>
+<p>
+To run the definition:
+</p>
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">Eval <span style="color:#66d9ef">compute</span> <span style="color:#66d9ef">in</span> quicksort <span style="color:#f92672">[</span>1<span style="color:#f92672">;</span>3<span style="color:#f92672">;</span>4<span style="color:#f92672">;</span>2<span style="color:#f92672">].</span></code></pre></div>
+</div>
+<p>
+Gives us <code>[1;2;3;4]</code>!
+</p>
+<h2 id="headline-5">
+Next steps
+</h2>
+<p>
+Now we have wrestled <code>quicksort</code> into a rigorous definition, we can start to prove different properties on it.
+  In the next post, we will consider formally proving that <code>quicksort</code> sorts successfully, and that
+  its runtime complexity is <code>O(n(log n))</code>.
+</p>
+<p>
+  In practice, a great deal of proofs can be carried out by automated solvers. 
+  I&#39;m personally interested in the extent to which tests can be replaced by the combination of high-level properties and solvers.
 </p>
 <div class="footnotes">
 <hr class="footnotes-separatator">
@@ -366,6 +513,43 @@ Of course, this proof applies to <code>greater_than_x</code> as well.
 </p>
 </div>
 </div>
+<div class="footnote-definition">
+<sup id="footnote-6"><a href="#footnote-reference-6">6</a></sup>
+<div class="footnote-body">
+<div class="src src-coq">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq"><span style="color:#f92672">Theorem</span> partition_preserves <span style="color:#f92672">:</span> <span style="color:#66d9ef">forall</span>  <span style="color:#f92672">(</span>f <span style="color:#f92672">:</span> <span style="color:#66d9ef">nat</span> <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">bool</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span>l <span style="color:#f92672">:</span> <span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">),</span> length <span style="color:#f92672">(</span>fst <span style="color:#f92672">(</span>partition f l<span style="color:#f92672">))</span> <span style="color:#f92672">&lt;=</span> length l<span style="color:#f92672">.</span>
+  <span style="color:#f92672">Proof</span><span style="color:#f92672">.</span>
+    <span style="color:#66d9ef">intros</span><span style="color:#f92672">.</span> <span style="color:#75715e">(* TODO *)</span>
+    <span style="color:#66d9ef">induction</span> l<span style="color:#f92672">.</span>  <span style="color:#75715e">(* Induction on l, gives us two sub-theorems to prove, one each for l being empty or non-empty *)</span>
+
+    <span style="color:#66d9ef">reflexivity</span><span style="color:#f92672">.</span> <span style="color:#75715e">(* Case l = [], holds obviously from calculation *)</span>
+
+    <span style="color:#66d9ef">simpl</span><span style="color:#f92672">.</span> <span style="color:#75715e">(* Case l = [a,..] *)</span>
+    remember <span style="color:#f92672">(</span> partition f l<span style="color:#f92672">)</span> <span style="color:#66d9ef">as</span> p<span style="color:#f92672">.</span> <span style="color:#75715e">(* Give a name to the result of our function. 
+</span><span style="color:#75715e">                                       This brings a new theorem called Heqp into scope, &#39;p = partition f l&#39;.*)</span>
+    <span style="color:#66d9ef">destruct</span> p <span style="color:#66d9ef">as</span> <span style="color:#f92672">(</span>l1<span style="color:#f92672">,</span>l2<span style="color:#f92672">).</span> <span style="color:#75715e">(* Pattern match on the result, and bring them into scope *)</span>
+    <span style="color:#66d9ef">symmetry</span> <span style="color:#66d9ef">in</span> Heqp<span style="color:#f92672">.</span> <span style="color:#75715e">(* Changes p = partition f l into partition f l = p*)</span>
+    <span style="color:#66d9ef">destruct</span> <span style="color:#f92672">(</span>f a<span style="color:#f92672">).</span> <span style="color:#75715e">(* Case match on (f a) being true or not *)</span>
+  
+
+    <span style="color:#75715e">(* f a is true, we must prove length (fst (a :: l1, l2)) &lt;= 1 + (length l) *)</span>
+    <span style="color:#75715e">(* Coq simplifies this to 1 + length l1 &lt;= 1 + length l *)</span>
+    <span style="color:#66d9ef">apply</span> Peano<span style="color:#f92672">.</span>le_n_S <span style="color:#66d9ef">in</span> IHl<span style="color:#f92672">.</span>
+    <span style="color:#75715e">(* Our induction hypothesis has been automatically named IHl, 
+</span><span style="color:#75715e">       and it says length l1 &lt;= length l. *)</span>
+
+    <span style="color:#75715e">(* Peano.le_n_S :  n &lt;= m -&gt; 1 + n &lt;= 1 + m changes IHl to match what we want to prove *)</span>
+    <span style="color:#66d9ef">apply</span> IHl<span style="color:#f92672">.</span>
+    
+    
+    <span style="color:#75715e">(* f a is false, we must prove   length (fst (l1, a :: l2)) &lt;= 1 + (length l) *)</span>
+    <span style="color:#66d9ef">apply</span> Nat<span style="color:#f92672">.</span>le_le_succ_r <span style="color:#66d9ef">in</span> IHl<span style="color:#f92672">.</span>
+    <span style="color:#75715e">(* Nat.le_le_succ_r : n &lt;= m -&gt; n &lt;= 1 + m  changes IHl to match what we want to prove*)</span>
+    <span style="color:#66d9ef">apply</span> IHl<span style="color:#f92672">.</span>
+  <span style="color:#f92672">Qed</span><span style="color:#f92672">.</span></code></pre></div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <ul class="pa0">
@@ -400,7 +584,7 @@ Of course, this proof applies to <code>greater_than_x</code> as well.
     <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
   <div class="flex justify-between">
   <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://www.alexwellbelove.com" >
-    &copy;  Personal Blog 2020 
+    &copy;  Alex Wellbelove 2020 
   </a>
     <div>
 
