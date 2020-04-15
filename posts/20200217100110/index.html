@@ -9,7 +9,7 @@
     <meta name="generator" content="Hugo 0.68.3" />
     
     
-      <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
     
 
     
@@ -35,7 +35,7 @@
 <meta itemprop="description" content="The definition of Quicksort   To start with, here&#39;s the classic definition of quicksort in Haskell. quicksort :: [Int] -&gt; [Int] quicksort l = case l of (x:rest) -&gt; let (less_than_x, greater_than_x) = partition (&lt; x) rest in quicksort less_than_x &#43;&#43; [x] &#43;&#43; quicksort greater_than_x [] -&gt; []   If you&#39;ve not seen this before, in prose it&#39;s saying: quicksort :: [Int] -&gt; [Int]   quicksort is a function that takes a list of integers, and returns a list of integers.">
 <meta itemprop="datePublished" content="2020-04-12T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-04-12T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1576">
+<meta itemprop="wordCount" content="1597">
 
 
 
@@ -43,22 +43,9 @@
 <meta name="twitter:title" content="Quicksort in Coq"/>
 <meta name="twitter:description" content="The definition of Quicksort   To start with, here&#39;s the classic definition of quicksort in Haskell. quicksort :: [Int] -&gt; [Int] quicksort l = case l of (x:rest) -&gt; let (less_than_x, greater_than_x) = partition (&lt; x) rest in quicksort less_than_x &#43;&#43; [x] &#43;&#43; quicksort greater_than_x [] -&gt; []   If you&#39;ve not seen this before, in prose it&#39;s saying: quicksort :: [Int] -&gt; [Int]   quicksort is a function that takes a list of integers, and returns a list of integers."/>
 
-      
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-163346024-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-    
   </head>
 
-  <body class="ma0 avenir bg-near-white production">
+  <body class="ma0 avenir bg-near-white">
 
     
    
@@ -192,7 +179,7 @@ Here&#39;s the above definition of <code>quicksort</code>, transliterated to coq
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq"><span style="color:#f92672">Definition</span> quicksort <span style="color:#f92672">(</span>l <span style="color:#f92672">:</span> <span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">)</span>  <span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">)</span> <span style="color:#f92672">:=</span>
  <span style="color:#66d9ef">match</span> l <span style="color:#66d9ef">with</span>
   <span style="color:#f92672">|</span> x <span style="color:#f92672">::</span> rest <span style="color:#f92672">=&gt;</span> 
-        <span style="color:#66d9ef">let</span> <span style="color:#f92672">(</span>less_than_x<span style="color:#f92672">,</span> greater_than_x<span style="color:#f92672">)</span> <span style="color:#f92672">:=</span> partition leb rest
+        <span style="color:#66d9ef">let</span> <span style="color:#f92672">(</span>less_than_x<span style="color:#f92672">,</span> greater_than_x<span style="color:#f92672">)</span> <span style="color:#f92672">:=</span> partition <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> y <span style="color:#f92672">=&gt;</span> leb y x<span style="color:#f92672">)</span> rest
         <span style="color:#66d9ef">in</span> quicksort less_than_x <span style="color:#f92672">++</span> <span style="color:#f92672">[</span>x<span style="color:#f92672">]</span> <span style="color:#f92672">++</span> quicksort greater_than_x
   <span style="color:#f92672">|</span> [] <span style="color:#f92672">=&gt;</span> []
   <span style="color:#66d9ef">end</span><span style="color:#f92672">.</span></code></pre></div>
@@ -330,7 +317,7 @@ so we have to use the full original calculation as the name.
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq"><span style="color:#f92672">Definition</span> quicksort <span style="color:#f92672">(</span>l <span style="color:#f92672">:</span> <span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">)</span>  <span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">list</span> <span style="color:#66d9ef">nat</span><span style="color:#f92672">)</span> <span style="color:#f92672">:=</span>
  <span style="color:#66d9ef">match</span> l <span style="color:#66d9ef">with</span>
   <span style="color:#f92672">|</span> x <span style="color:#f92672">::</span> rest <span style="color:#f92672">=&gt;</span> 
-        quicksort <span style="color:#f92672">(</span>fst <span style="color:#f92672">(</span>partition <span style="color:#f92672">(</span>leb x<span style="color:#f92672">)</span> rest<span style="color:#f92672">))</span> <span style="color:#f92672">++</span> <span style="color:#f92672">[</span>x<span style="color:#f92672">]</span> <span style="color:#f92672">++</span> quicksort <span style="color:#f92672">(</span>snd <span style="color:#f92672">(</span>partition <span style="color:#f92672">(</span>leb x<span style="color:#f92672">)</span> rest<span style="color:#f92672">))</span>
+        quicksort <span style="color:#f92672">(</span>fst <span style="color:#f92672">(</span>partition <span style="color:#f92672">((</span><span style="color:#66d9ef">fun</span> y <span style="color:#f92672">=&gt;</span> leb y x<span style="color:#f92672">)</span> rest<span style="color:#f92672">))</span> <span style="color:#f92672">++</span> <span style="color:#f92672">[</span>x<span style="color:#f92672">]</span> <span style="color:#f92672">++</span> quicksort <span style="color:#f92672">(</span>snd <span style="color:#f92672">(</span>partition <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> y <span style="color:#f92672">=&gt;</span> leb y x<span style="color:#f92672">)</span> rest<span style="color:#f92672">))</span>
   <span style="color:#f92672">|</span> [] <span style="color:#f92672">=&gt;</span> []
   <span style="color:#66d9ef">end</span><span style="color:#f92672">.</span></code></pre></div>
 </div>
@@ -338,13 +325,13 @@ so we have to use the full original calculation as the name.
 Our first obligation becomes
 </p>
 <div class="src src-coq">
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">length <span style="color:#f92672">(</span>fst <span style="color:#f92672">(</span>partition <span style="color:#f92672">(</span>leb x<span style="color:#f92672">)</span> rest<span style="color:#f92672">))</span> <span style="color:#f92672">&lt;</span> length <span style="color:#f92672">(</span>x <span style="color:#f92672">::</span> rest<span style="color:#f92672">)</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">length <span style="color:#f92672">(</span>fst <span style="color:#f92672">(</span>partition <span style="color:#f92672">((</span><span style="color:#66d9ef">fun</span> y <span style="color:#f92672">=&gt;</span> leb y x<span style="color:#f92672">)</span> rest<span style="color:#f92672">))</span> <span style="color:#f92672">&lt;</span> length <span style="color:#f92672">(</span>x <span style="color:#f92672">::</span> rest<span style="color:#f92672">)</span></code></pre></div>
 </div>
 <p>
 Or equivalently
 </p>
 <div class="src src-coq">
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">length <span style="color:#f92672">(</span>fst <span style="color:#f92672">(</span>partition <span style="color:#f92672">(</span>leb x<span style="color:#f92672">)</span> rest<span style="color:#f92672">))</span> <span style="color:#f92672">&lt;</span> 1 <span style="color:#f92672">+</span> length <span style="color:#f92672">(</span>rest<span style="color:#f92672">)</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-coq" data-lang="coq">length <span style="color:#f92672">(</span>fst <span style="color:#f92672">(</span>partition <span style="color:#f92672">((</span><span style="color:#66d9ef">fun</span> y <span style="color:#f92672">=&gt;</span> leb y x<span style="color:#f92672">))</span> rest<span style="color:#f92672">))</span> <span style="color:#f92672">&lt;</span> 1 <span style="color:#f92672">+</span> length <span style="color:#f92672">(</span>rest<span style="color:#f92672">)</span></code></pre></div>
 </div>
 <p>
 It is worth taking a minute to check how you intuitively know this to be true.
@@ -443,7 +430,7 @@ Next steps
 <p>
 Now we have wrestled <code>quicksort</code> into a rigorous definition, we can start to prove different properties on it.
   In the next post, we will consider formally proving that <code>quicksort</code> sorts successfully, and that
-  its runtime complexity is <code>O(n(log n))</code>.
+  its worst-case runtime complexity is <code>O(n^2)</code>.
 </p>
 <p>
   In practice, a great deal of proofs can be carried out by automated solvers. 
