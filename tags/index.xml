@@ -6,10 +6,15 @@
     <description>Recent content in Tags on Alex Wellbelove</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
-    <lastBuildDate>Sun, 12 Apr 2020 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="http://www.alexwellbelove.com/tags/index.xml" rel="self" type="application/rss+xml" />
-    
+    <lastBuildDate>Sun, 12 Apr 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://www.alexwellbelove.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>frugality</title>
+      <link>http://www.alexwellbelove.com/tags/frugality/</link>
+      <pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.alexwellbelove.com/tags/frugality/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>functional</title>

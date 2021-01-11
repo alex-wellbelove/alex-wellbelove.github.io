@@ -6,10 +6,16 @@
     <description>Recent content in Posts on Alex Wellbelove</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
-    <lastBuildDate>Sun, 12 Apr 2020 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="http://www.alexwellbelove.com/posts/index.xml" rel="self" type="application/rss+xml" />
-    
+    <lastBuildDate>Sun, 12 Apr 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://www.alexwellbelove.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cheapness</title>
+      <link>http://www.alexwellbelove.com/posts/cheapness/</link>
+      <pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.alexwellbelove.com/posts/cheapness/</guid>
+      <description>When talking about &amp;#39;saving&amp;#39;, I think a lot of people put it into the &amp;#39;necessary evil&amp;#39; bucket. Something to be ashamed you&amp;#39;re not quite doing enough of, or something that you&amp;#39;re putting off a month or two. Sort of like a new years resolution to exercise more.
+ But, in the same way that, depending on your outlook, exercise can be treadmill drudgery or a life-affirming hobby, I believe frugality can be in and of itself a source of joy and (life) - without considering the financial benefits.</description>
+    </item>
     
     <item>
       <title>Quicksort in Coq</title>
@@ -17,7 +23,9 @@
       <pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate>
       
       <guid>http://www.alexwellbelove.com/posts/20200217100110/</guid>
-      <description>The definition of Quicksort   To start with, here&amp;#39;s the classic definition of quicksort in Haskell. quicksort :: [Int] -&amp;gt; [Int] quicksort l = case l of (x:rest) -&amp;gt; let (less_than_x, greater_than_x) = partition (&amp;lt; x) rest in quicksort less_than_x ++ [x] ++ quicksort greater_than_x [] -&amp;gt; []   If you&amp;#39;ve not seen this before, in prose it&amp;#39;s saying: quicksort :: [Int] -&amp;gt; [Int]   quicksort is a function that takes a list of integers, and returns a list of integers.</description>
+      <description>The definition of Quicksort   To begin with, here&amp;#39;s the classic definition of quicksort in Haskell.
+quicksort :: [Int] -&amp;gt; [Int] quicksort l = case l of (x:rest) -&amp;gt; let (less_than_x, greater_than_x) = partition (&amp;lt; x) rest in quicksort less_than_x ++ [x] ++ quicksort greater_than_x [] -&amp;gt; []   If you&amp;#39;ve not seen this before, in prose it&amp;#39;s saying:
+quicksort :: [Int] -&amp;gt; [Int]  quicksort is a function that takes a list of integers, and returns a list of integers.</description>
     </item>
     
   </channel>
