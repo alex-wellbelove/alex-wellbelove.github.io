@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+
+<html lang="en-gb">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no"/>
+
+    <title>Dependent types, simply | Alex Wellbelove</title>
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#FF3DB4">
+    <meta name="theme-color" content="#ffffff">
+
+    
+    
+    
+    <link rel="stylesheet" href="http://www.alexwellbelove.com/css/main.min.e34415025514319010e741089e6920454053855755ba465f66943ad102d2cb08.css"/>
+
+    
+    
+    
+
+    
+    
+ 
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-163346024-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script></head>
+
+    <body>
+        
+<nav>
+  <header>
+    <div class="site-title">
+        <a href="/">Alex Wellbelove</a>
+    </div>  
+</header>
+
+  <div class="nav-menu">
+  
+  <a class="color-link nav-link" href="http://www.alexwellbelove.com/index.xml" target="_blank" rel="noopener" type="application/rss+xml">RSS</a>
+</div>
+<footer class="footer">
+	<div class="social-icons">
+        
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+</div>
+
+
+
+
+    <p><a href="https://github.com/kimcc/hugo-theme-noteworthy" target="_blank" rel="noopener">Noteworthy theme</a></p>
+    <p><a href="https://gohugo.io" target="_blank" rel="noopener">Built with Hugo</a></p>
+
+	<script src="http://www.alexwellbelove.com/js/main.min.a7205ef73b078c8daed6fe1b0826e8ba229ffabbb69d299d9446cf41f2c7d8aa.js" integrity="sha256-pyBe9zsHjI2u1v4bCCbouiKf+ru2nSmdlEbPQfLH2Ko=" crossorigin="anonymous"></script>
+</footer>
+
+</nav>
+
+        <div id="content" class="content-container">
+        
+
+<h1 class="post-title">Dependent types, simply</h1>
+    
+    <time>November 15, 2022</time>
+    
+    <div>
+        <p>
+        <p>Dependent types have a reputation.</p>
+<p>When you read about them, you will hear that they are &lsquo;a programming language feature so advanced that they can be used as a foundation of all of mathematics&rsquo; or
+&rsquo;that you need a PhD to use, let alone to understand, any language that has dependent types&rsquo;.</p>
+<p>I&rsquo;m continuing a tradition<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> here by saying that they are actually <em>simpler</em> to understand than most type systems.</p>
+<p>I&rsquo;ll prove it to you, by building up a language with them from scratch.</p>
+<h2 id="lambda-calculus">Lambda calculus</h2>
+<p>We have <em>two words</em>  or <em>terms</em> in our language.</p>
+<ul>
+<li>Variables, which are just letters:
+$$x, y, z$$</li>
+<li>Lambdas, which look like: $$\lambda x .y$$
+We can place them next to each other, which is called <em>application</em>:
+$$ xy $$
+$$ (\lambda x . y) z $$
+$$ (\lambda x . x) (\lambda y . y) $$
+$$ &hellip; $$</li>
+</ul>
+<p>If our application has a $\lambda$ on the left, we can
+<em>evaluate</em> it.</p>
+<p>$$
+\text{eval} ((\lambda \red{x} . \green{x}) \blue{z}) = z
+$$</p>
+<p>We do this by replacing every
+<span style = "color:red"> argument </span> in
+the <span style = "color:green"> body </span>
+with the <span style="color:#6495ed;"> input </span><sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>:</p>
+<p>$$
+\text{eval} ((\lambda \red{x} . \green{x x}) \blue{z}) = zz
+$$</p>
+<p>$$
+\text{eval} ((\lambda \red{x} . \green{x}) \blue{(\lambda a . a)}) = \lambda a . a
+$$
+$$
+\text{eval} ((\lambda \red{x} . \green{y}) \blue{z}) = y
+$$
+This is a Turing-complete language that forms the basis of Lisp and Haskell, and can be used to <a href="https://en.wikipedia.org/wiki/Church_encoding">perform mathematics</a>, define <a href="https://en.wikipedia.org/wiki/Mogensen-Scott_encoding">data structures</a>, and so on.</p>
+<h2 id="adding-basic-types">Adding basic types</h2>
+<p>Our terms can have types.</p>
+<p>Let&rsquo;s say that, for now, our &ldquo;base&rdquo; types are <code>Bool</code> and <code>Int</code>.
+To keep track of which variable has what type, we keep a dictionary<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>:</p>
+<p><code>{&quot;y&quot; : &quot;Int&quot;}</code> says that &ldquo;y&rdquo; is an &ldquo;Int&rdquo;.</p>
+<p>Whenever we need to lookup the type of a <em>variable</em> <code>y</code> we simply fetch it from the dictionary, throwing an error if it&rsquo;s not there.</p>
+<p><br>
+Our <em>functions</em> can also have types.</p>
+<p>To say that our function accepts only variables of some type T, we add &ldquo;:T&rdquo; to our $\lambda$:</p>
+<p>$$
+\lambda x : T .  x
+$$
+So, a function that only accepts Booleans:
+$$
+\lambda x : \text{Bool} .  x
+$$</p>
+<p>This would have a type
+$$
+\text{Bool} \to \text{&lsquo;something&rsquo;}
+$$</p>
+<p>To find out what the &lsquo;something is&rsquo;,
+we add <code>{&quot;x&quot; : &quot;Bool&quot;}</code> to the dictionary, as we now know that the input <code>x</code> will be a <code>Bool</code>, and then return the type of the result.</p>
+<p>Here, the result is <code>x</code>, so the type of the result is just the type of the input <code>x</code>. The overall function, then, has type:
+$$
+\text{Bool} \to \text{Bool}
+$$</p>
+<p>If we had a dictionary</p>
+<pre tabindex="0"><code>{&#34;y&#34;:&#34;Int&#34;}
+</code></pre><p>And a function
+$$
+\lambda x: \text{Bool}. y
+$$</p>
+<p>the type would be
+$$
+\text{Bool} \to \text{Int}
+$$</p>
+<p>Which says that if we applied this function to something of type Bool, the result would be of type Int.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<p>If we try to apply this function to something that is <em>not</em> of type Bool, we throw an error.</p>
+<h2 id="adding-dependent-types">Adding dependent types</h2>
+<p>The key point of dependent types is that types can depend on terms.
+This is not as exotic as it sounds.</p>
+<p>Imagine a &ldquo;today&rsquo;s date&rdquo; function (in Python, say) that takes a <code>format_as_string</code> parameter, and returns either a date object or a string, depending on the value of that parameter:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">todays_date_formatted</span>(format_as_string):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> format_as_string:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> str(date<span style="color:#f92672">.</span>today())
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> date<span style="color:#f92672">.</span>today()
+</span></span></code></pre></div><p>What should the type of a function like this be?</p>
+<p>In non-dependently-typed languages, the best we could do would be something like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-haskell" data-lang="haskell"><span style="display:flex;"><span><span style="color:#66d9ef">Bool</span> <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">Either</span> <span style="color:#66d9ef">Date</span> <span style="color:#66d9ef">String</span>
+</span></span></code></pre></div><p>Which says:</p>
+<p>&ldquo;Give me a Bool and you&rsquo;ll get back either a Date or a String, but I can&rsquo;t tell you which&rdquo;.</p>
+<p>What we really want to be able to say, though, is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-idris" data-lang="idris"><span style="display:flex;"><span><span style="color:#f92672">(</span>format_as_string <span style="color:#f92672">:</span> <span style="color:#66d9ef">Bool</span><span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">if</span> format_as_string <span style="color:#66d9ef">then</span> <span style="color:#66d9ef">String</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">Date</span>
+</span></span></code></pre></div><p>Which says something like:</p>
+<p>&ldquo;Give me a Bool. If you give me True, I&rsquo;ll give you back a String. Otherwise I&rsquo;ll give you back a Date&rdquo;</p>
+<h3 id="pi-types">Pi types</h3>
+<p>Function types that can change their output type depending on the <em>value</em> given to them, are called &lsquo;dependent function types&rsquo;, or &lsquo;Pi&rsquo; types.</p>
+<p>They look like:</p>
+<p>$$
+(x : T) \to f(x)
+$$</p>
+<p>Where <em>f</em> is a function that takes the value <code>x</code> and returns a Type.</p>
+<p>E.g., our function above would have type:</p>
+<p>$$
+(x : \text{Bool}) \to (\text{if } x \text{. String Date})
+$$</p>
+<p>Our f(x) here is $(\text{if } x \text{. String Date})$.</p>
+<p>Of course, just like our regular functions, the &lsquo;argument name&rsquo; <code>x</code> is arbitrary, using any other name gives the same Pi type:</p>
+<p>$$
+(y : \text{Bool}) \to (\text{if } y \text{. String Date})
+$$</p>
+<p>Notice also that the input type - $\text{Bool}$ - is just as before.  The function still just accepts regular types, only the output type becomes more complex.<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup><sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup></p>
+<p>Let&rsquo;s work with a simplified version of the above function:</p>
+<p>$$
+\lambda x : \text{Bool} . (\text{if}\ x\ s\ d)
+$$
+Assuming &rsquo;s&rsquo; is variable with type &lsquo;String&rsquo;, and &rsquo;d&rsquo; is some variable with type &lsquo;Date&rsquo;.</p>
+<p>We define <code>if</code> here<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup>, but it&rsquo;s enough to know that <code>if</code> returns its first argument when given <code>True</code>, otherwise returns its second argument.</p>
+<h3 id="typechecking-dependent-types">Typechecking dependent types</h3>
+<p>So the defining question: How do we typecheck a function like this?</p>
+<p>First, let&rsquo;s say we want to typecheck an expression that applies this function to a variable:</p>
+<p>$$
+(\lambda x : \text{Bool} . (\text{if}\ x\ s\ d))\ \text{True}
+$$</p>
+<p>To begin we check that the variable has the right input type, as before.
+We know <code>True</code> has type <code>Bool</code>, which is what we wanted, so we continue.</p>
+<p>To figure out the output type, we <em>substitute the input variable into the output type function, exactly like we did with the lambda calculus</em>.</p>
+<p>We replace every instance of the <span style = "color:red"> type-level argument </span> in the <span style = "color:green"> output function </span> with the <span style="color:#6495ed"> input variable </span>:</p>
+<p>$$
+(\red{x} : \text{Bool}) \to \green{(\text{if}\ \red{x}\ \text{String\ Date)}})\ \blue{\text{True}}
+$$
+becomes
+$$
+\green{\text{if}\ \blue{True}\ \text{String}\ \text{Date}}
+$$
+which becomes<sup id="fnref1:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup>
+$$
+String
+$$
+So we know that the overall expression has type <code>String</code>, and that the result of the expression will be a <code>String</code>.</p>
+<p>The trickiest part: How do we know if our function&rsquo;s dependent type is telling the truth? I.e., that we really <em>will</em> return a String if given True?</p>
+<p>It&rsquo;s just the same as with our normal function type.</p>
+<p>We first add <code>{&quot;x&quot;: &quot;Bool&quot;}</code> to our dictionary, and then return the type of the right side of the function.</p>
+<h3 id="u">U</h3>
+<p>Now that we can blurred the lines between types and terms, we need some way to distinguish them. To do this, we create a special &ldquo;type of types&rdquo;, which we call U.</p>
+<p>In the same way that <code>{&quot;x&quot;:&quot;Int&quot;}</code> denotes that <code>x</code> is an <code>Int</code>, <code>{&quot;Int&quot;:&quot;U&quot;}</code>, denotes that <code>Int</code> is a <code>Type</code>.</p>
+<p>This is important, because, for instance, we need to check that our functions have <code>Type</code>s, rather than variables in their type signatures.</p>
+<p>We assert also that <code>U</code> itself has type <code>{&quot;U&quot;:&quot;U&quot;}</code>.</p>
+<h3 id="what-was-missed-here-and-next-steps">What was missed here, and next steps</h3>
+<p>I skipped a couple of things here, mostly because I think they would be distracting from the main intuition.</p>
+<h4 id="alpha-equality-name-clashes">Alpha equality, name clashes.</h4>
+<p>As mentioned,</p>
+<p>$$\lambda x . x$$</p>
+<p>is the same function as</p>
+<p>$$\lambda y . y$$</p>
+<p>and the innermost x in:</p>
+<p>$$(\lambda x . (\lambda x . x)) $$</p>
+<p>is different from the outermost. There are many ways to deal with this, but the simplest is just to rename any variables that clash:</p>
+<p>$$(\lambda x . (\lambda x\prime . x\prime)) $$</p>
+<h4 id="universe-levels">Universe levels</h4>
+<p>Defining the type of <code>U</code> to be <code>U</code> allows Girard&rsquo;s Paradox, making an inconsistent system for proofs. This isn&rsquo;t particularly an issue for our purposes now, but &lsquo;proper&rsquo; dependent type systems can get around this by defining an infinite hierarchy of universes, such that the type of $U_{1}$ is $U_{2}$, and so on.</p>
+<h2 id="a-smarter-more-ergonomic-typechecker">A smarter, more ergonomic typechecker</h2>
+<p>Of course, there are many ways to write a smarter typechecker.
+The standard is a &lsquo;bidirectional, elaborational&rsquo; type checker. An example is given by Coquand <sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup>.</p>
+<h3 id="type-constructors-inductivity-proofs">Type constructors, inductivity, proofs</h3>
+<p>What we have defined is based on the <em>calculus of constructions</em>.
+For technical reasons, though, we can&rsquo;t define induction in our system so far.</p>
+<p>To do so, we need to add the concepts of type constructors and deconstructors, defining the <em>calculus of inductive constructions</em> (the full basis of Coq).
+With this, we can define the natural numbers, dependent pairs, even equality.</p>
+<p>At this point, we would be able to start constructing interesting proofs.</p>
+<p>As such, we would also want some notion of &rsquo;tactics&rsquo;, which are ways of simplifying the construction of these proofs.</p>
+<p>I&rsquo;ll write about this in some separate post.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://augustss.blogspot.com/2007/10/simpler-easier-in-recent-paper-simply.html">Simpler Easier</a>, which refers to <a href="http://strictlypositive.org/Easy.pdf">simply easy</a>.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>If we try to evaluate a variable, we just get that variable back.<br>
+If we try to evaluate an application without a lambda on the left, we recursively evaluate the left and right sides. If the left side then returns a lambda, we evaluate as usual. <br>
+This doesn&rsquo;t tend to come up.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>I&rsquo;m deliberately ignoring nameclashes, for now.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p>You can &lsquo;mathematically&rsquo; write this as
+$$
+\Gamma \vdash y: \text{Int}
+$$&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5">
+<p>If we have a function returning a function:
+<br>
+$$
+\lambda x : T . (\lambda y : T\prime . z)
+$$
+<br>
+It has type
+<br>
+$$
+T \to T\prime \to \text{(the type of z)}
+$$
+<br>
+which is to say that it has multiple arguments, via currying.&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6">
+<p><code>x:</code> is just giving an arbitrary name to the input term, we could also have written it something like:
+$$
+\text{Bool} \to (\text{if } \textit{input\textunderscore term} \text{ String Bool})
+$$
+If we decided to disallow the language user from naming the input_term whatever they would like.&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7">
+<p><br>
+Our &rsquo;normal&rsquo; function types are the special case where the output type doesn&rsquo;t depend on the input term:
+<br>
+$$
+(x : \text{Bool}) \to \text{Int}
+$$
+<br>
+Is our new way of writing
+$$
+\text{Bool} \to \text{Int}
+$$
+<br>
+We just ignore the input term x when finding the output type.&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8">
+<p><br>
+As an example of the Lambda Calculus, let&rsquo;s define basic booleans.
+Later on, we will see a simpler way to define this in terms of inductive types<br>
+$$
+\text{true} := \lambda a . \lambda b . a
+$$
+$$
+\text{false} := \lambda a . \lambda b . b
+$$
+<br>
+$$
+if p:= \lambda p . \lambda a . \lambda b . p a b
+$$
+<br>
+So
+$$
+if \text{ true } x\ y
+$$
+Is
+$$
+((\lambda p . \lambda a . \lambda b . p a b) (\lambda a\prime . \lambda b\prime . a\prime ))x\ y
+$$
+Where I&rsquo;ve added &ldquo;$\prime$&rdquo; to the as and bs from $\text{true}$, to distinguish them from the <code>a</code>s and <code>b</code>s from <code>if</code>.
+<br>
+Substituting $p$ for the contents of $\text{true}$:
+<br>
+$$
+(\lambda a . \lambda b . (\lambda a\prime . \lambda b\prime . a \prime)ab) x\ y
+$$
+<br>
+And then $x$ for $a$:
+<br>
+$$
+(\lambda b . (\lambda a\prime . \lambda b\prime . a \prime) x\ b) y
+$$
+$y$ for $b$:
+<br>
+$$
+(\lambda a\prime . \lambda b\prime . a \prime) x\ y
+$$
+<br>
+$x$ for $a\prime$:
+$$
+(\lambda b\prime . x) y
+$$
+$b\prime$ for $y$:
+$$
+x
+$$
+($b\prime$ doesn&rsquo;t appear in the body, so y is just dropped.)
+<br>
+Which is all to say that
+$$
+if \text{ true } x\ y
+$$
+is indeed $x$&#160;<a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a>&#160;<a href="#fnref1:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:9">
+<p><a href="https://www.sciencedirect.com/science/article/pii/0167642395000216">https://www.sciencedirect.com/science/article/pii/0167642395000216</a>&#160;<a href="#fnref:9" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+        </p>
+    </div>
+    
+
+    
+
+    <div class="page-footer">
+        
+    </div>
+
+
+        
+
+<link rel="stylesheet" type="text/css" href="/css/katex.min.css" crossorigin="anonymous">
+<script type="text/javascript" src="/js/katex.min.js" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/auto-render.min.js"onload="renderMathInElement(document.body);" crossorigin="anonymous"></script>
+
+<script>
+ document.addEventListener("DOMContentLoaded", function() {
+     renderMathInElement(document.body, {
+         delimiters: [
+             {left: "$$", right: "$$", display: true},
+             {left: "$", right: "$", display: false}
+         ]
+     });
+ });
+</script>
+
+
+
+        </div>
+        <footer class="footer-mobile">
+	<div class="social-icons">
+        
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+</div>
+
+
+
+
+	<div class="footer-mobile-links">
+        <p><a href="https://github.com/kimcc/hugo-theme-noteworthy" target="_blank" rel="noopener">Noteworthy theme</a></p>
+		<span class="divider-bar">|</span>
+        <p><a href="https://gohugo.io" target="_blank" rel="noopener">Built with Hugo</a></p>
+	</div>
+
+	<script src="http://www.alexwellbelove.com/js/main.min.a7205ef73b078c8daed6fe1b0826e8ba229ffabbb69d299d9446cf41f2c7d8aa.js" integrity="sha256-pyBe9zsHjI2u1v4bCCbouiKf+ru2nSmdlEbPQfLH2Ko=" crossorigin="anonymous"></script>
+</footer>
+
+    </body>
+</html>
