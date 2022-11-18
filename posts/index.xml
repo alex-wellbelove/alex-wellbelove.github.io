@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Alex Wellbelove</title>
-    <link>http://alexwellbelove.com/posts/</link>
+    <link>https://alexwellbelove.com/posts/</link>
     <description>Recent content in Posts on Alex Wellbelove</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
-    <lastBuildDate>Tue, 15 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://alexwellbelove.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 15 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://alexwellbelove.com/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Dependent types, simply</title>
-      <link>http://alexwellbelove.com/dependent-types-1/</link>
+      <link>https://alexwellbelove.com/dependent-types-1/</link>
       <pubDate>Tue, 15 Nov 2022 00:00:00 +0000</pubDate>
       
-      <guid>http://alexwellbelove.com/dependent-types-1/</guid>
+      <guid>https://alexwellbelove.com/dependent-types-1/</guid>
       <description>Dependent types have a reputation.
 When you read about them, you will hear that they are &amp;lsquo;a programming language feature so advanced that they can be used as a foundation of all of mathematics&amp;rsquo; or &amp;rsquo;that you need a PhD to use, let alone to understand, any language that has dependent types&amp;rsquo;.
 I&amp;rsquo;m continuing a tradition1 here by saying that they are actually simpler to understand than most type systems.</description>
@@ -20,10 +20,10 @@ I&amp;rsquo;m continuing a tradition1 here by saying that they are actually simp
     
     <item>
       <title>Cheapness</title>
-      <link>http://alexwellbelove.com/posts/cheapness/</link>
+      <link>https://alexwellbelove.com/posts/cheapness/</link>
       <pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://alexwellbelove.com/posts/cheapness/</guid>
+      <guid>https://alexwellbelove.com/posts/cheapness/</guid>
       <description>When talking about &amp;#39;saving&amp;#39;, I think a lot of people put it into the &amp;#39;necessary evil&amp;#39; bucket. Something to be ashamed you&amp;#39;re not quite doing enough of, or something that you&amp;#39;re putting off a month or two. Something like a New Year&amp;#39;s resolution to exercise more.
 But, in the same way that, depending on your outlook, exercise can be treadmill drudgery or a life-affirming hobby, I believe frugality can be in and of itself a source of happiness - without considering the financial benefits.</description>
     </item>

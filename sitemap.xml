@@ -2,24 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://alexwellbelove.com/</loc>
+    <loc>https://alexwellbelove.com/</loc>
     <lastmod>2022-11-15T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://alexwellbelove.com/dependent-types-1/</loc>
+    <loc>https://alexwellbelove.com/dependent-types-1/</loc>
     <lastmod>2022-11-15T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://alexwellbelove.com/posts/</loc>
+    <loc>https://alexwellbelove.com/posts/</loc>
     <lastmod>2022-11-15T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://alexwellbelove.com/posts/cheapness/</loc>
+    <loc>https://alexwellbelove.com/posts/cheapness/</loc>
     <lastmod>2020-04-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://alexwellbelove.com/tags/frugality/</loc>
+    <loc>https://alexwellbelove.com/tags/frugality/</loc>
     <lastmod>2020-04-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://alexwellbelove.com/tags/</loc>
+    <loc>https://alexwellbelove.com/tags/</loc>
     <lastmod>2020-04-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://alexwellbelove.com/categories/</loc>
+    <loc>https://alexwellbelove.com/categories/</loc>
   </url>
 </urlset>
